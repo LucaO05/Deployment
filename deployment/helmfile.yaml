@@ -1,0 +1,13 @@
+releases:
+  - name: postgresql
+    namespace: wordpress
+    createNamespace: true
+    chart: ./postgre
+    values:
+      - values.yaml
+
+  - name: wordpress
+    namespace: wordpress
+    chart: ./wordpress
+    values:
+      - values.yaml
