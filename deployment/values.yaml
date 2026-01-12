@@ -1,0 +1,31 @@
+replicaCount: 1
+
+wordpressUser: admin
+wordpressPW: admin123
+wordpressEmail: admin@example.com
+wordpressFirstName: Admin
+wordpressLastName: User
+wordpressBlogName: "My WordPress"
+
+service:
+  type: ClusterIP
+
+postgresql:
+  enabled: true
+  auth:
+    username: wpuser
+    password: wppassword
+    database: wordpress
+  image:
+    tag: 15.4.0
+  service:
+    ports:
+      postgresql: "5432"
+
+resources:
+  limits:
+    cpu: 0.5
+    memory: 512Mi
+  request:
+    cpu: 0.1
+    memory: 256Mi

@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-postgresql
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Release.Name }}-postgresql
+  ports:
+    - name: postgresql
+      port: {{ .Values.postgresql.service.ports.postgresql }}
+      targetPort: 5432
