@@ -13,17 +13,19 @@ spec:
         app: {{ .Release.Name }}
     spec:
       containers:
-        - name: postgresql
-          image: postgres:{{ .Values.postgresql.image.tag }}
+        - name: mysql
+          image: mysql:{{ .Values.mysql.image.tag }}
           ports:
-            - containerPort: 5432
+            - containerPort: {{ .Values.database.port }}
           env:
-            - name: POSTGRES_DB
-              value: {{ .Values.postgresql.auth.database | quote }}
-            - name: POSTGRES_USER
-              value: {{ .Values.postgresql.auth.username | quote }}
-            - name: POSTGRES_PASSWORD
-              value: {{ .Values.postgresql.auth.password | quote }}
+            - name: MYSQL_DATABASE
+              value: {{ .Values.mysql.auth.database | quote }}
+            - name: MYSQL_USER
+              value: {{ .Values.mysql.auth.username | quote }}
+            - name: MYSQL_PASSWORD
+              value: {{ .Values.mysql.auth.password | quote }}
+            - name: MYSQL_ROOT_PASSWORD
+              value: {{ .Values.mysql.auth.password | quote }}
           resources:
             limits:
               cpu: {{ .Values.resources.limits.cpu | quote }}
@@ -32,21 +34,21 @@ spec:
               cpu: {{ .Values.resources.request.cpu | quote }}
               memory: {{ .Values.resources.request.memory | quote }}
           volumeMounts:
-            - name: postgre-data
-              mountPath: /var/lib/postgresql/data
+            - name: mysql-data
+              mountPath: /var/lib/mysql
       tolerations:
         - key: "m3.services/workernode"
           operator: "Exists"
           effect: "NoSchedule"
       volumes:
-        - name: postgre-data
+        - name: mysql-data
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-postgre-pvc
+            claimName: {{ .Release.Name }}-mysql-pvc
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: {{ .Release.Name }}-postgre-pvc
+  name: {{ .Release.Name }}-mysql-pvc
 spec:
   accessModes:
     - ReadWriteOnce

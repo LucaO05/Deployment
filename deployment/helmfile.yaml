@@ -1,8 +1,8 @@
 releases:
-  - name: postgresql
+  - name: mysql
     namespace: loestreich
     createNamespace: true
-    chart: ./postgre
+    chart: ./mysql
     values:
       - values.yaml
 
