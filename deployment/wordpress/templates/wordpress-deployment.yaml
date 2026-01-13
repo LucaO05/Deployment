@@ -1,31 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-wordpress
+  name: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-wordpress
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-wordpress
+        app: {{ .Release.Name }}
     spec:
       containers:
         - name: wordpress
           image: wordpress:6.4-apache
           ports:
-            - containerPort: 80
+            - containerPort: {{ .Values.service.port }}
+              protocol: TCP
+              name: http
           env:
             - name: WORDPRESS_DB_HOST
-              value: {{ .Release.Name }}-postgresql:5432
+              value: {{ .Values.database.host }}:{{ .Values.database.port }}
             - name: WORDPRESS_DB_NAME
-              value: {{ .Values.postgresql.auth.database | quote }}
+              value: {{ .Values.database.name | quote }}
             - name: WORDPRESS_DB_USER
-              value: {{ .Values.postgresql.auth.username | quote }}
+              value: {{ .Values.database.user | quote }}
             - name: WORDPRESS_DB_PASSWORD
-              value: {{ .Values.postgresql.auth.password | quote }}
+              value: {{ .Values.database.password | quote }}
             - name: WORDPRESS_ADMIN_USER
               value: {{ .Values.wordpressUser | quote }}
             - name: WORDPRESS_ADMIN_PASSWORD
@@ -36,15 +38,30 @@ spec:
               value: {{ .Values.wordpressBlogName | quote }}
           resources:
             limits:
-              cpu: {{ .Values.resources.limits.cpu | quote }}
-              memory: {{ .Values.resources.limits.memory | quote }}
+              cpu: "250m"
+              memory: "256Mi"
             requests:
-              cpu: {{ .Values.resources.request.cpu | quote }}
-              memory: {{ .Values.resources.request.memory | quote }}
+              cpu: "100m"
+              memory: "128Mi"
           volumeMounts:
             - name: wordpress-data
               mountPath: /var/www/html
+      tolerations:
+        - key: "m3.services/workernode"
+          operator: "Exists"
+          effect: "NoSchedule"
       volumes:
         - name: wordpress-data
           persistentVolumeClaim:
             claimName: {{ .Release.Name }}-wordpress-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-wordpress-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size }}

@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}-postgresql
+  name: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      app: {{ .Release.Name }}-postgresql
+      app: {{ .Release.Name }}
   template:
     metadata:
       labels:
-        app: {{ .Release.Name }}-postgresql
+        app: {{ .Release.Name }}
     spec:
       containers:
         - name: postgresql
@@ -32,9 +32,24 @@ spec:
               cpu: {{ .Values.resources.request.cpu | quote }}
               memory: {{ .Values.resources.request.memory | quote }}
           volumeMounts:
-            - name: postgres-data
+            - name: postgre-data
               mountPath: /var/lib/postgresql/data
+      tolerations:
+        - key: "m3.services/workernode"
+          operator: "Exists"
+          effect: "NoSchedule"
       volumes:
-        - name: postgres-data
+        - name: postgre-data
           persistentVolumeClaim:
-            claimName: {{ .Release.Name }}-postgres-pvc
+            claimName: {{ .Release.Name }}-postgre-pvc
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-postgre-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.persistence.size }}

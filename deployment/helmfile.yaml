@@ -1,13 +1,13 @@
 releases:
   - name: postgresql
-    namespace: wordpress
+    namespace: loestreich
     createNamespace: true
     chart: ./postgre
     values:
       - values.yaml
 
-  - name: wordpress
-    namespace: wordpress
+  - name: mywordpress
+    namespace: loestreich
     chart: ./wordpress
     values:
       - values.yaml

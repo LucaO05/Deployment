@@ -7,8 +7,16 @@ wordpressFirstName: Admin
 wordpressLastName: User
 wordpressBlogName: "My WordPress"
 
+nameOverride: ""
+fullnameOverride: ""
+
 service:
   type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+persistence:
+  size: 1Gi
 
 postgresql:
   enabled: true
@@ -17,10 +25,17 @@ postgresql:
     password: wppassword
     database: wordpress
   image:
-    tag: 15.4.0
+    tag: 15.4
   service:
     ports:
       postgresql: "5432"
+
+database:
+  host: postgresql
+  port: 5432
+  name: wordpress
+  user: wpuser
+  password: wppassword
 
 resources:
   limits:
@@ -29,3 +44,17 @@ resources:
   request:
     cpu: 0.1
     memory: 256Mi
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations: {}
+  hosts:
+    - host: mywordpress.i01-8.m3-dev.services
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: mywordpress-tls
+      hosts:
+        - mywordpress.i01-8.m3-dev.services
