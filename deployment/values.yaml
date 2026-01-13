@@ -18,21 +18,21 @@ service:
 persistence:
   size: 1Gi
 
-postgresql:
+mysql:
   enabled: true
   auth:
     username: wpuser
     password: wppassword
     database: wordpress
   image:
-    tag: 15.4
+    tag: "8.0"
   service:
     ports:
-      postgresql: "5432"
+      mysql: "3306"
 
 database:
-  host: postgresql
-  port: 5432
+  host: mysql
+  port: 3306
   name: wordpress
   user: wpuser
   password: wppassword
