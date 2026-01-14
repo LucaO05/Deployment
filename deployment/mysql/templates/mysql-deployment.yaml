@@ -31,8 +31,8 @@ spec:
               cpu: {{ .Values.resources.limits.cpu | quote }}
               memory: {{ .Values.resources.limits.memory | quote }}
             requests:
-              cpu: {{ .Values.resources.request.cpu | quote }}
-              memory: {{ .Values.resources.request.memory | quote }}
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | quote }}
           volumeMounts:
             - name: mysql-data
               mountPath: /var/lib/mysql

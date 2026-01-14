@@ -9,5 +9,7 @@ releases:
   - name: mywordpress
     namespace: loestreich
     chart: ./wordpress
+    needs:
+      - loestreich/mysql
     values:
       - values.yaml
